@@ -10,6 +10,20 @@ import (
 )
 
 // Blind: client blinds input value x -> returns blinded element + blinding scalar.
+func BlindConstantTime(x []byte) (*ristretto255.Scalar, *ristretto255.Element, error) {
+	// Pad input to fixed length (64 bytes)
+	const fixedLen = 64
+	padded := make([]byte, fixedLen)
+	if len(x) >= fixedLen {
+		copy(padded, x[:fixedLen])
+	} else {
+		copy(padded, x)
+		// Optionally, pad with zeros (already done by make)
+	}
+	return Blind(padded)
+}
+
+// Blind: client blinds input value x -> returns blinded element + blinding scalar.
 func Blind(x []byte) (*ristretto255.Scalar, *ristretto255.Element, error) {
 	var rBytes [64]byte
 	if _, err := io.ReadFull(rand.Reader, rBytes[:]); err != nil {
